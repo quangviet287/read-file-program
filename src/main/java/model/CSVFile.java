@@ -1,7 +1,4 @@
-package factory;
-
-import model.Company;
-import model.File;
+package model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,10 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CSVFactory implements FileAbstractFactory {
+public class CSVFile extends FileData {
+
+    private Path src;
+
+    public CSVFile(Path src) {
+        this.src = src;
+    }
+
     @Override
-    public List<Company> getContentFile(Path file) {
-        List<Company> companyList = null;
+    public List<Company> getDataContent(Path file) {
+        List<Company> companyList = new ArrayList<>();
         try (InputStream in = Files.newInputStream(file)){
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line = null;
@@ -43,17 +47,27 @@ public class CSVFactory implements FileAbstractFactory {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return companyList;
     }
 
-    private List<?> getListElementsByCountry(Path file, final String country) {
-        List<Company> list = this.getContentFile(file);
-        return list.stream().filter(p->p.getCountry().equals(country)).collect(Collectors.toList());
+    @Override
+    public void getTotalCapitalByCountry(Path file){
+        List<Company> companyList = this.getDataContent(file);
+        int total = companyList.stream().filter(p->p.getCountry().equals("CH")).mapToInt(Company::getCapital).sum();
+        System.out.println("Total capital of “CH” headquarters is: " + total);
     }
 
-    private int getTotalCapitalByCountry(Path file, String country) {
-        List<Company> list = this.getContentFile(file);
-        return list.stream().filter(p->p.getCountry().equals(country)).mapToInt(Company::getCapital).sum();
+    @Override
+    public void getNameOfCompanyByCountry(Path file){
+        List<Company> companyList = this.getDataContent(file);
+        List<Company> listNames = companyList.stream().filter(p->p.getCountry().equals("CH")).collect(Collectors.toList());
+        System.out.println("List Name of company of “CH” headquarters is: " + listNames);
+    }
+
+    @Override
+    public String toString() {
+        return "CSVFile{" +
+                "src=" + src +
+                '}';
     }
 }
