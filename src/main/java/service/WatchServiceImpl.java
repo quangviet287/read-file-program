@@ -1,17 +1,21 @@
 package service;
 
+import exception.TypeNotSupportedException;
+import factory.FileFactory;
+import model.FileData;
+
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
 
 public class WatchServiceImpl {
 
-    public WatchServiceImpl(){
+    public WatchServiceImpl(String directory){
         try {
+            System.out.println("Watch service is started for directory: "+directory);
             WatchService watchService = FileSystems.getDefault().newWatchService();
-            Path dir = Paths.get("E:\\Data");
-            WatchKey key = dir.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_DELETE,
-                    StandardWatchEventKinds.ENTRY_MODIFY);
+            Path dir = Paths.get(directory);
+            WatchKey key = dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
             for (;;) {
 
                 try {
@@ -22,7 +26,7 @@ public class WatchServiceImpl {
 
                 for (WatchEvent<?> event : key.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
-                    if (key == StandardWatchEventKinds.OVERFLOW) {
+                    if (kind == StandardWatchEventKinds.OVERFLOW) {
                         continue;
                     }
 
@@ -30,21 +34,38 @@ public class WatchServiceImpl {
                     Path fileName = ev.context();
 
                     Path child = dir.resolve(fileName);
-                    if (!Files.probeContentType(child).equals("text/plain")) {
-                        System.err.format("New file '%s'" +
-                                " is not a plain text file.%n", fileName);
+                    if (!Files.probeContentType(child).equals("application/vnd.ms-excel")) {
+                        System.err.println("File '" + fileName + "' is not a CSV file.");
                         continue;
                     }
 
-                    System.out.format("File %s%n is modified", fileName);
+                    System.out.println("File '" + fileName + "' is modified.");
+                    Path file = Paths.get(directory + fileName);
+                    readFileData(file);
+
                 }
+
                 boolean valid = key.reset();
                 if (!valid) {
                     break;
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void readFileData(Path file) {
+        try {
+            FileData fileData = FileFactory.getFile(file);
+            System.out.println("Reimport successfully. New content such as : ");
+            List<?> listContent = fileData.getDataContent(file);
+            listContent.stream().forEach(e-> System.out.println(e));
+            CSVFileServiceImpl csvFileService = new CSVFileServiceImpl(file);
+        } catch (TypeNotSupportedException e) {
+            System.err.println(e.getErrMessage());
+        } catch (IOException e) {
+            System.err.println("File not found. "+ e.getMessage());
         }
     }
 }
