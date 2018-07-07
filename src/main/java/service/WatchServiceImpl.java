@@ -3,6 +3,7 @@ package service;
 import exception.TypeNotSupportedException;
 import factory.FileFactory;
 import model.FileData;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -10,7 +11,9 @@ import java.util.List;
 
 public class WatchServiceImpl {
 
-    public WatchServiceImpl(String directory){
+    final static Logger logger = Logger.getLogger(WatchServiceImpl.class);
+
+    public static void run(String directory){
         try {
             System.out.println("Watch service is started for directory: "+directory);
             WatchService watchService = FileSystems.getDefault().newWatchService();
@@ -34,12 +37,14 @@ public class WatchServiceImpl {
                     Path fileName = ev.context();
 
                     Path child = dir.resolve(fileName);
-                    if (!Files.probeContentType(child).equals("application/vnd.ms-excel")) {
-                        System.err.println("File '" + fileName + "' is not a CSV file.");
+                    if (!Files.probeContentType(child).equals("application/vnd.ms-excel") // CSV file
+                            && !Files.probeContentType(child).equals("text/plain") // Text file
+                            && !Files.probeContentType(child).equals("text/xml")) { //XML file
+                        logger.warn("File is '"+fileName+"' not a valid file.");
                         continue;
                     }
 
-                    System.out.println("File '" + fileName + "' is modified.");
+                    logger.info("File '"+fileName+"' is modified.");
                     Path file = Paths.get(directory + fileName);
                     readFileData(file);
 
@@ -51,21 +56,21 @@ public class WatchServiceImpl {
                 }
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
-    private void readFileData(Path file) {
+    private static void readFileData(Path file) {
         try {
             FileData fileData = FileFactory.getFile(file);
-            System.out.println("Reimport successfully. New content such as : ");
-            List<?> listContent = fileData.getDataContent(file);
-            listContent.stream().forEach(e-> System.out.println(e));
-            CSVFileServiceImpl csvFileService = new CSVFileServiceImpl(file);
+
+            logger.warn("Reimport successfully.");
+
         } catch (TypeNotSupportedException e) {
-            System.err.println(e.getErrMessage());
-        } catch (IOException e) {
-            System.err.println("File not found. "+ e.getMessage());
+            logger.error(e.getErrMessage());
         }
+//        catch (IOException e) {
+//            logger.error(e.getMessage());
+//        }
     }
 }

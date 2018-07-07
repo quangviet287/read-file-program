@@ -10,9 +10,9 @@ import java.nio.file.Path;
 public class FileFactory {
 
     public static FileData getFile(Path file) throws TypeNotSupportedException {
-        String name = file.getFileName().toString();
-        if (name.endsWith(".csv")) {
-            return new CSVFile(file);
+        String fileName = file.getFileName().toString();
+        if (fileName.endsWith(".csv")) {
+            return new CSVFile(fileName);
         } else {
             throw new TypeNotSupportedException("Type not supported. Please try again!");
         }
