@@ -16,9 +16,6 @@ import static service.CSVFileServiceImpl.getTotalCapitalByCountry;
 
 public class WatchServiceImpl {
 
-    @Autowired
-    CSVFileServiceImpl csvFileService;
-
     final static Logger logger = Logger.getLogger(WatchServiceImpl.class);
 
     public static void run(String directory){
@@ -32,7 +29,7 @@ public class WatchServiceImpl {
                 try {
                     key = watchService.take();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 }
 
                 for (WatchEvent<?> event : key.pollEvents()) {
@@ -80,7 +77,7 @@ public class WatchServiceImpl {
         } catch (TypeNotSupportedException e) {
             logger.error(e.getErrMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

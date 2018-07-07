@@ -13,7 +13,7 @@ public class CSVFileServiceImpl {
 
     public static void getTotalCapitalByCountry(List<Company> companyList){
         logger.info("Start get total capital by country: ");
-            long total = companyList.stream().filter(c->"CH".equals(c.getCountry())).map(Company::getCapital).count();
+            long total = getTotalCapitalByCountryIsCH(companyList);
             logger.info("Total capital of “CH” headquarters is: " + total);
             logger.info("The list is sorted descending: ");
             companyList.stream()
@@ -25,10 +25,18 @@ public class CSVFileServiceImpl {
 
     public static void getNameOfCompanyByCountry(List<Company> companyList){
         logger.info("Start get name of company by country: ");
-        List<String> listNames = companyList.stream()
-                        .filter(p->p.getCountry().equals("CH"))
-                        .map(c->c.getName())
-                        .collect(Collectors.toList());
+        List<String> listNames = getListNameOfCompanyByCountry(companyList);
         logger.info("List Name of company of “CH” headquarters is: " + listNames);
+    }
+
+    public static long getTotalCapitalByCountryIsCH(List<Company> companyList){
+        return companyList.stream().filter(c->"CH".equals(c.getCountry())).map(Company::getCapital).count();
+    }
+
+    public static List<String> getListNameOfCompanyByCountry(List<Company> companyList){
+        return companyList.stream()
+                .filter(p->p.getCountry().equals("CH"))
+                .map(c->c.getName())
+                .collect(Collectors.toList());
     }
 }
