@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface FileData {
 
-    List<?> getDataContent(Path file) throws IOException;
+    List<Company> getDataContent(Path file) throws IOException;
 
 }

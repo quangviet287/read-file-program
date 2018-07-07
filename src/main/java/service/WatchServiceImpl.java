@@ -2,20 +2,28 @@ package service;
 
 import exception.TypeNotSupportedException;
 import factory.FileFactory;
+import model.Company;
 import model.FileData;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
+import static service.CSVFileServiceImpl.getNameOfCompanyByCountry;
+import static service.CSVFileServiceImpl.getTotalCapitalByCountry;
+
 public class WatchServiceImpl {
+
+    @Autowired
+    CSVFileServiceImpl csvFileService;
 
     final static Logger logger = Logger.getLogger(WatchServiceImpl.class);
 
     public static void run(String directory){
         try {
-            System.out.println("Watch service is started for directory: "+directory);
+            logger.info("Watch service is started for directory: "+directory);
             WatchService watchService = FileSystems.getDefault().newWatchService();
             Path dir = Paths.get(directory);
             WatchKey key = dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
@@ -63,14 +71,16 @@ public class WatchServiceImpl {
     private static void readFileData(Path file) {
         try {
             FileData fileData = FileFactory.getFile(file);
-
-            logger.warn("Reimport successfully.");
+            List<Company> companyList = fileData.getDataContent(file);
+            logger.warn("Reimport successfully. New content such as: ");
+            companyList.stream().forEach(e->logger.info(e));
+            getNameOfCompanyByCountry(companyList);
+            getTotalCapitalByCountry(companyList);
 
         } catch (TypeNotSupportedException e) {
             logger.error(e.getErrMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-//        catch (IOException e) {
-//            logger.error(e.getMessage());
-//        }
     }
 }

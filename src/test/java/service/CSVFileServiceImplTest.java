@@ -21,7 +21,7 @@ public class CSVFileServiceImplTest {
 
     @Test(expected = TypeNotSupportedException.class)
     public void shouldThrowTypeNotSupportedExceptionWhenTypeInvalid() throws TypeNotSupportedException {
-        CSVFileServiceImpl csvFileService = new CSVFileServiceImpl(prepareFileTypeInvalid());
+        //CSVFileServiceImpl csvFileService = new CSVFileServiceImpl(prepareFileTypeInvalid());
     }
 
     /*@Test

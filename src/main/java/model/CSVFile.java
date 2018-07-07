@@ -1,19 +1,18 @@
 package model;
 
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CSVFile implements  FileData {
+
+    final static Logger logger = Logger.getLogger(CSVFile.class);
 
     private String CSVFile;
 
@@ -47,7 +46,7 @@ public class CSVFile implements  FileData {
                 companyList.add(company);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } finally {
             if( reader != null ) reader.close();
         }
