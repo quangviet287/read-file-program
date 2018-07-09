@@ -7,9 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CSVFileService {
+public class ReadFileService {
 
-    final static Logger logger = Logger.getLogger(CSVFileService.class);
+    final static Logger logger = Logger.getLogger(ReadFileService.class);
 
     public void getTotalCapitalByCountry(List<Company> companyList){
         logger.info("Start get total capital by country: ");

@@ -28,7 +28,7 @@ public class WatchService {
                 try {
                     key = watchService.take();
                 } catch (InterruptedException e) {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
                 }
 
                 for (WatchEvent<?> event : key.pollEvents()) {
@@ -42,16 +42,10 @@ public class WatchService {
 
                     Path child = dir.resolve(fileName);
 
-                    if (TYPE_SUPPORTED.equals(Files.probeContentType(child))){
-                        logger.warn("File is '"+fileName+"' not a valid file.");
+                    if (TYPE_SUPPORTED.equals(Files.probeContentType(child))) {
+                        logger.warn("File is '" + fileName + "' not a valid file.");
                         continue;
                     }
-                    /*if (!Files.probeContentType(child).equals("application/vnd.ms-excel") // CSV file
-                            && !Files.probeContentType(child).equals("text/plain") // Text file
-                            && !Files.probeContentType(child).equals("text/xml")) { //XML file
-                        logger.warn("File is '"+fileName+"' not a valid file.");
-                        continue;
-                    }*/
 
                     logger.info("File '"+fileName+"' is modified.");
                     Path file = Paths.get(directory + fileName);
@@ -65,7 +59,7 @@ public class WatchService {
                 }
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -75,14 +69,15 @@ public class WatchService {
             List<Company> companyList = fileData.getDataContent(file);
             logger.warn("Reimport successfully. New content such as: ");
             companyList.stream().forEach(e->logger.info(e));
-            CSVFileService csvFileService = new CSVFileService();
-            csvFileService.getNameOfCompanyByCountry(companyList);
-            csvFileService.getTotalCapitalByCountry(companyList);
+            ReadFileService readFileService = new ReadFileService();
+            readFileService.getNameOfCompanyByCountry(companyList);
+            readFileService.getTotalCapitalByCountry(companyList);
 
         } catch (TypeNotSupportedException e) {
-            logger.error(e.getErrMessage());
+            logger.error(e.getErrMessage(), e);
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("Error when reading file", e);
+
         }
     }
 }

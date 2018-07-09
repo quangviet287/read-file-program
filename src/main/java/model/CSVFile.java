@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,10 +22,11 @@ public class CSVFile implements  FileData {
     }
 
     @Override
-    public List<Company> getDataContent(Path file) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(file)));
+    public List<Company> getDataContent(Path file){
         List<Company> companyList = new ArrayList<>();
-        try {
+        try (InputStream in = Files.newInputStream(file);
+             BufferedReader reader =
+                     new BufferedReader(new InputStreamReader(in))) {
             String line = null;
             List<String> list = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
@@ -46,9 +48,7 @@ public class CSVFile implements  FileData {
                 companyList.add(company);
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
-        } finally {
-            if( reader != null ) reader.close();
+            logger.error("Error when read data content", e);
         }
         return companyList;
     }

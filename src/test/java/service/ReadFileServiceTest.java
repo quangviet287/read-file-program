@@ -10,24 +10,24 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class CSVFileServiceTest {
+public class ReadFileServiceTest {
 
 
     @InjectMocks
-    CSVFileService csvFileService;
+    ReadFileService readFileService;
 
     @Test
     public void shouldReturnTotalCapitalByCountry(){
         List<Company> companyList = prepareDataContent();
         long expectResult = 1;
-        long actualResult = csvFileService.getTotalCapitalByCountryIsCH(companyList);
+        long actualResult = readFileService.getTotalCapitalByCountryIsCH(companyList);
         Assert.assertEquals(expectResult,actualResult);
     }
 
     @Test
     public void shouldReturnListNameOfCompanyByCountry(){
         List<Company> companyList = prepareDataContent();
-        List<String> listNameActual = csvFileService.getListNameOfCompanyByCountry(companyList);
+        List<String> listNameActual = readFileService.getListNameOfCompanyByCountry(companyList);
         List<String> listNameExpect = listNameOfCompanyByCountry();
         Assert.assertEquals(listNameExpect, listNameActual);
     }
