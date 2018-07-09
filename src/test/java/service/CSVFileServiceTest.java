@@ -3,28 +3,31 @@ package service;
 import model.Company;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static service.CSVFileServiceImpl.getListNameOfCompanyByCountry;
-import static service.CSVFileServiceImpl.getTotalCapitalByCountryIsCH;
 
-public class CSVFileServiceImplTest {
+public class CSVFileServiceTest {
 
+
+    @InjectMocks
+    CSVFileService csvFileService;
 
     @Test
     public void shouldReturnTotalCapitalByCountry(){
         List<Company> companyList = prepareDataContent();
         long expectResult = 1;
-        long actualResult = getTotalCapitalByCountryIsCH(companyList);
+        long actualResult = csvFileService.getTotalCapitalByCountryIsCH(companyList);
         Assert.assertEquals(expectResult,actualResult);
     }
 
     @Test
     public void shouldReturnListNameOfCompanyByCountry(){
         List<Company> companyList = prepareDataContent();
-        List<String> listNameActual = getListNameOfCompanyByCountry(companyList);
+        List<String> listNameActual = csvFileService.getListNameOfCompanyByCountry(companyList);
         List<String> listNameExpect = listNameOfCompanyByCountry();
         Assert.assertEquals(listNameExpect, listNameActual);
     }

@@ -5,23 +5,22 @@ import factory.FileFactory;
 import model.Company;
 import model.FileData;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 
-import static service.CSVFileServiceImpl.getNameOfCompanyByCountry;
-import static service.CSVFileServiceImpl.getTotalCapitalByCountry;
 
-public class WatchServiceImpl {
+public class WatchService {
 
-    final static Logger logger = Logger.getLogger(WatchServiceImpl.class);
+    final static Logger logger = Logger.getLogger(WatchService.class);
 
-    public static void run(String directory){
+    static String [] TYPE_SUPPORTED = new String[] {"application/vnd.ms-excel","text/plain","text/xml"};
+
+    public void run(String directory){
         try {
             logger.info("Watch service is started for directory: "+directory);
-            WatchService watchService = FileSystems.getDefault().newWatchService();
+            java.nio.file.WatchService watchService = FileSystems.getDefault().newWatchService();
             Path dir = Paths.get(directory);
             WatchKey key = dir.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
             for (;;) {
@@ -42,12 +41,17 @@ public class WatchServiceImpl {
                     Path fileName = ev.context();
 
                     Path child = dir.resolve(fileName);
-                    if (!Files.probeContentType(child).equals("application/vnd.ms-excel") // CSV file
+
+                    if (TYPE_SUPPORTED.equals(Files.probeContentType(child))){
+                        logger.warn("File is '"+fileName+"' not a valid file.");
+                        continue;
+                    }
+                    /*if (!Files.probeContentType(child).equals("application/vnd.ms-excel") // CSV file
                             && !Files.probeContentType(child).equals("text/plain") // Text file
                             && !Files.probeContentType(child).equals("text/xml")) { //XML file
                         logger.warn("File is '"+fileName+"' not a valid file.");
                         continue;
-                    }
+                    }*/
 
                     logger.info("File '"+fileName+"' is modified.");
                     Path file = Paths.get(directory + fileName);
@@ -65,14 +69,15 @@ public class WatchServiceImpl {
         }
     }
 
-    private static void readFileData(Path file) {
+    private void readFileData(Path file) {
         try {
             FileData fileData = FileFactory.getFile(file);
             List<Company> companyList = fileData.getDataContent(file);
             logger.warn("Reimport successfully. New content such as: ");
             companyList.stream().forEach(e->logger.info(e));
-            getNameOfCompanyByCountry(companyList);
-            getTotalCapitalByCountry(companyList);
+            CSVFileService csvFileService = new CSVFileService();
+            csvFileService.getNameOfCompanyByCountry(companyList);
+            csvFileService.getTotalCapitalByCountry(companyList);
 
         } catch (TypeNotSupportedException e) {
             logger.error(e.getErrMessage());

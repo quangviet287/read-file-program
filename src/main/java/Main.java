@@ -1,5 +1,5 @@
 import org.apache.log4j.Logger;
-import service.WatchServiceImpl;
+import service.WatchService;
 
 public class Main {
     final static Logger logger = Logger.getLogger(Main.class);
@@ -10,6 +10,7 @@ public class Main {
                System.exit(-1);
            }
            String directory = args[0];
-           WatchServiceImpl.run(directory);
+           WatchService watchService = new WatchService();
+           watchService.run(directory);
     }
 }

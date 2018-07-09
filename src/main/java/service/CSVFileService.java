@@ -7,13 +7,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CSVFileServiceImpl {
+public class CSVFileService {
 
-    final static Logger logger = Logger.getLogger(CSVFileServiceImpl.class);
+    final static Logger logger = Logger.getLogger(CSVFileService.class);
 
-    public static void getTotalCapitalByCountry(List<Company> companyList){
+    public void getTotalCapitalByCountry(List<Company> companyList){
         logger.info("Start get total capital by country: ");
-            long total = getTotalCapitalByCountryIsCH(companyList);
+            int total = getTotalCapitalByCountryIsCH(companyList);
             logger.info("Total capital of “CH” headquarters is: " + total);
             logger.info("The list is sorted descending: ");
             companyList.stream()
@@ -23,17 +23,17 @@ public class CSVFileServiceImpl {
     }
 
 
-    public static void getNameOfCompanyByCountry(List<Company> companyList){
+    public void getNameOfCompanyByCountry(List<Company> companyList){
         logger.info("Start get name of company by country: ");
         List<String> listNames = getListNameOfCompanyByCountry(companyList);
         logger.info("List Name of company of “CH” headquarters is: " + listNames);
     }
 
-    public static long getTotalCapitalByCountryIsCH(List<Company> companyList){
-        return companyList.stream().filter(c->"CH".equals(c.getCountry())).map(Company::getCapital).count();
+    public int getTotalCapitalByCountryIsCH(List<Company> companyList){
+        return companyList.stream().filter(c->"CH".equals(c.getCountry())).mapToInt(Company::getCapital).sum();
     }
 
-    public static List<String> getListNameOfCompanyByCountry(List<Company> companyList){
+    public List<String> getListNameOfCompanyByCountry(List<Company> companyList){
         return companyList.stream()
                 .filter(p->p.getCountry().equals("CH"))
                 .map(c->c.getName())
