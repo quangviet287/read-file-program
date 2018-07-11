@@ -1,12 +1,14 @@
+package main;
+
 import org.apache.log4j.Logger;
 import service.WatchService;
 
 public class Main {
-    final static Logger logger = Logger.getLogger(Main.class);
+    private static final Logger LOGGER = Logger.getLogger(Main.class);
 
     public static void main(String[] args){
            if (args.length == 0){
-               logger.error("No argument found.");
+               LOGGER.error("No argument found. Please add program arguments before you run project.");
                System.exit(-1);
            }
            String directory = args[0];

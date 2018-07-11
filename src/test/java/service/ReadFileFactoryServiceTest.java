@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class ReadFileServiceTest {
+public class ReadFileFactoryServiceTest {
 
 
     @InjectMocks

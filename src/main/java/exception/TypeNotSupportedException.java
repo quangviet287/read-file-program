@@ -2,18 +2,10 @@ package exception;
 
 public class TypeNotSupportedException extends Exception {
 
-    private String errMessage;
+    private String fileType;
 
-    public TypeNotSupportedException(String errMessage) {
-        this.errMessage = errMessage;
+    public TypeNotSupportedException(String fileType) {
+        super("File not supported:" + fileType);
+        this.fileType = fileType;
     }
-
-    public String getErrMessage() {
-        return errMessage;
-    }
-
-    public void setErrMessage(String errMessage) {
-        this.errMessage = errMessage;
-    }
-
 }

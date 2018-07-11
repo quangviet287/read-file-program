@@ -9,33 +9,35 @@ import java.util.stream.Collectors;
 
 public class ReadFileService {
 
-    final static Logger logger = Logger.getLogger(ReadFileService.class);
 
-    public void getTotalCapitalByCountry(List<Company> companyList){
-        logger.info("Start get total capital by country: ");
+    private static final String CH_COUNTRY = "CH";
+    private static final Logger LOGGER = Logger.getLogger(ReadFileService.class);
+
+    public void showTotalCapitalByCountry(List<Company> companyList){
+        LOGGER.info("Start get total capital by country: ");
             int total = getTotalCapitalByCountryIsCH(companyList);
-            logger.info("Total capital of “CH” headquarters is: " + total);
-            logger.info("The list is sorted descending: ");
+            LOGGER.info("Total capital of “CH” headquarters is: " + total);
+            LOGGER.info("The list is sorted descending: ");
             companyList.stream()
                             .sorted(Comparator.comparing(Company::getCapital)
                             .reversed())
-                            .forEach(e-> logger.info(e));
+                            .forEach(e-> LOGGER.info(e));
     }
 
 
-    public void getNameOfCompanyByCountry(List<Company> companyList){
-        logger.info("Start get name of company by country: ");
+    public void showNameOfCompanyByCountry(List<Company> companyList){
+        LOGGER.info("Start get name of company by country: ");
         List<String> listNames = getListNameOfCompanyByCountry(companyList);
-        logger.info("List Name of company of “CH” headquarters is: " + listNames);
+        LOGGER.info("List Name of company of “CH” headquarters is: " + listNames);
     }
 
     public int getTotalCapitalByCountryIsCH(List<Company> companyList){
-        return companyList.stream().filter(c->"CH".equals(c.getCountry())).mapToInt(Company::getCapital).sum();
+        return companyList.stream().filter(c-> CH_COUNTRY.equals(c.getCountry())).mapToInt(Company::getCapital).sum();
     }
 
     public List<String> getListNameOfCompanyByCountry(List<Company> companyList){
         return companyList.stream()
-                .filter(p->p.getCountry().equals("CH"))
+                .filter(c->CH_COUNTRY.equals(c.getCountry()))
                 .map(c->c.getName())
                 .collect(Collectors.toList());
     }

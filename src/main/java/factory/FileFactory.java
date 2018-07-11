@@ -2,20 +2,21 @@ package factory;
 
 
 import exception.TypeNotSupportedException;
-import model.CSVFile;
-import model.FileData;
+import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
 
 public class FileFactory {
 
+    private static final String CSV_FILE = "csv";
+
     public static FileData getFile(Path file) throws TypeNotSupportedException {
         String fileName = file.getFileName().toString();
-        if (fileName.endsWith(".csv")) {
-            return new CSVFile(fileName);
-        } else {
-            throw new TypeNotSupportedException("Type not supported. Please try again!");
+        if (FilenameUtils.isExtension(fileName, CSV_FILE)) {
+            return new CSVFile(file.toString());
         }
+        throw new TypeNotSupportedException(file.getFileName().toString());
+
     }
 
 }
